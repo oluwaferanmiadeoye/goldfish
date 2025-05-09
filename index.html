@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Goldfish on Base</title>
+    <link rel="shortcut icon" href="fish.jpg" type="image/x-icon" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+
+      html {
+        scroll-behavior: smooth;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .fish-bg {
+        background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PHBhdGggZD0iTTEwLDhBMywyLDAsMCwxLDgsMTNBMywzLDAsMCwxLDYsOCIgc3R5bGU9Im9wYWNpdHk6MC4yO2ZpbGw6I2ZmZmZmZiIvPjwvc3ZnPg==");
+      }
+
+      .btn-swim {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .btn-swim:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-swim:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: 0.5s;
+      }
+
+      .btn-swim:hover:before {
+        left: 100%;
+      }
+
+      .fish-card {
+        transition: all 0.3s ease;
+      }
+
+      .fish-card:hover {
+        transform: translateY(-10px);
+      }
+
+      .swimming {
+        animation: swim 5s infinite ease-in-out;
+      }
+
+      @keyframes swim {
+        0% {
+          transform: translateX(0) rotate(0deg);
+        }
+        25% {
+          transform: translateX(10px) rotate(5deg);
+        }
+        50% {
+          transform: translateX(0) rotate(0deg);
+        }
+        75% {
+          transform: translateX(-10px) rotate(-5deg);
+        }
+        100% {
+          transform: translateX(0) rotate(0deg);
+        }
+      }
+
+      .progress-container {
+        position: fixed;
+        top: 0;
+        z-index: 100;
+        width: 100%;
+        height: 4px;
+      }
+
+      .progress-bar {
+        height: 4px;
+        background: #ff9500;
+        width: 0%;
+      }
+
+      .mobile-menu {
+        transition: transform 0.3s ease;
+        transform: translateX(-100%);
+      }
+
+      .mobile-menu.show {
+        transform: translateX(0);
+      }
+
+      .ripple {
+        position: absolute;
+        border-radius: 50%;
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+
+      @keyframes ripple {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="bg-yellow-50 text-yellow-900 font-sans">
+    <!-- Progress bar -->
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Sticky Navbar -->
+    <header class="sticky top-0 z-50 bg-yellow-400 shadow-lg">
+      <div class="container mx-auto flex justify-between items-center p-4">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-fish text-2xl swimming"></i>
+          <h1 class="text-2xl font-bold">Goldfish on Base</h1>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex space-x-6">
+          <a
+            href="#tokenomics"
+            class="font-medium hover:text-yellow-800 transition-colors"
+            >Tokenomics</a
+          >
+          <a
+            href="#how-to-buy"
+            class="font-medium hover:text-yellow-800 transition-colors"
+            >How to Buy</a
+          >
+          <a
+            href="#fishfam"
+            class="font-medium hover:text-yellow-800 transition-colors"
+            >Fish Fam</a
+          >
+          <a
+            href="#trust"
+            class="font-medium hover:text-yellow-800 transition-colors"
+            >Why Trust</a
+          >
+          <a
+            href="#roadmap"
+            class="font-medium hover:text-yellow-800 transition-colors"
+            >Roadmap</a
+          >
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button id="menuBtn" class="md:hidden focus:outline-none">
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+      </div>
+
+      <!-- Mobile Navigation Overlay -->
+      <div
+        id="mobileMenu"
+        class="mobile-menu fixed top-0 left-0 h-full w-full bg-yellow-400 z-50 flex flex-col items-center justify-center"
+      >
+        <button
+          id="closeMenuBtn"
+          class="absolute top-4 right-4 text-3xl focus:outline-none"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+        <nav class="flex flex-col space-y-6 text-center">
+          <a
+            href="#tokenomics"
+            class="text-xl font-bold hover:text-yellow-800 transition-colors"
+            onclick="closeMenu()"
+            >Tokenomics</a
+          >
+          <a
+            href="#how-to-buy"
+            class="text-xl font-bold hover:text-yellow-800 transition-colors"
+            onclick="closeMenu()"
+            >How to Buy</a
+          >
+          <a
+            href="#fishfam"
+            class="text-xl font-bold hover:text-yellow-800 transition-colors"
+            onclick="closeMenu()"
+            >Fish Fam</a
+          >
+          <a
+            href="#trust"
+            class="text-xl font-bold hover:text-yellow-800 transition-colors"
+            onclick="closeMenu()"
+            >Why Trust</a
+          >
+          <a
+            href="#roadmap"
+            class="text-xl font-bold hover:text-yellow-800 transition-colors"
+            onclick="closeMenu()"
+            >Roadmap</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section
+      class="relative bg-gradient-to-b from-yellow-300 to-yellow-200 text-center py-24 px-6 fish-bg overflow-hidden"
+    >
+      <div class="absolute top-0 left-0 w-full h-full">
+        <div class="absolute swimming" style="top: 10%; left: 5%">
+          <i class="fas fa-fish text-yellow-500 opacity-20 text-4xl"></i>
+        </div>
+        <div
+          class="absolute swimming"
+          style="top: 30%; left: 80%; animation-delay: 1s"
+        >
+          <i class="fas fa-fish text-yellow-500 opacity-20 text-3xl"></i>
+        </div>
+        <div
+          class="absolute swimming"
+          style="top: 70%; left: 20%; animation-delay: 2s"
+        >
+          <i class="fas fa-fish text-yellow-500 opacity-20 text-5xl"></i>
+        </div>
+      </div>
+
+      <div class="relative z-10">
+        <h2 class="text-5xl md:text-6xl font-extrabold mb-6">$FISH on Base</h2>
+        <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
+          The meme token making waves in the crypto ocean. Community-powered, LP
+          locked, and totally transparent.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a
+            href="#how-to-buy"
+            class="btn-swim bg-yellow-600 text-yellow-50 px-8 py-3 rounded-full text-lg font-semibold hover:bg-yellow-700 transition inline-flex items-center justify-center"
+          >
+            <i class="fas fa-shopping-cart mr-2"></i> Buy $FISH
+          </a>
+          <a
+            href="#tokenomics"
+            class="btn-swim bg-yellow-200 border-2 border-yellow-600 px-8 py-3 rounded-full text-lg font-semibold hover:bg-yellow-100 transition inline-flex items-center justify-center"
+          >
+            <i class="fas fa-chart-pie mr-2"></i> Tokenomics
+          </a>
+        </div>
+
+        <div class="mt-12 flex justify-center space-x-4">
+          <a
+            href="https://twitter.com"
+            target="_blank"
+            class="text-yellow-800 hover:text-yellow-600 transition-colors"
+          >
+            <i class="fa-brands fa-x-twitter text-2xl"></i>
+          </a>
+          <a
+            href="https://t.me"
+            target="_blank"
+            class="text-yellow-800 hover:text-yellow-600 transition-colors"
+          >
+            <i class="fab fa-telegram text-2xl"></i>
+          </a>
+          <a
+            href="https://discord.com"
+            target="_blank"
+            class="text-yellow-800 hover:text-yellow-600 transition-colors"
+          >
+            <i class="fab fa-discord text-2xl"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Banner -->
+    <div class="bg-yellow-600 text-yellow-100 py-4">
+      <div
+        class="container mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center"
+      >
+        <div>
+          <p class="text-sm">HOLDERS</p>
+          <p class="text-2xl font-bold">13,000+</p>
+        </div>
+        <div>
+          <p class="text-sm">MARKET CAP</p>
+          <p class="text-2xl font-bold">$61K</p>
+        </div>
+        <div>
+          <p class="text-sm">LIQUIDITY</p>
+          <p class="text-2xl font-bold">$18K</p>
+        </div>
+        <div>
+          <p class="text-sm">PRICE</p>
+          <p class="text-2xl font-bold">0.00009950</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tokenomics Section -->
+    <section id="tokenomics" class="py-20 bg-yellow-50 px-6">
+      <div class="max-w-6xl mx-auto">
+        <h3 class="text-4xl font-bold mb-6 text-center">Tokenomics</h3>
+        <p class="text-center max-w-2xl mx-auto mb-12">
+          Transparent and fair tokenomics designed to reward holders and ensure
+          sustainable growth
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div
+            class="fish-card bg-gradient-to-br from-yellow-200 to-yellow-300 p-8 rounded-xl shadow-lg relative overflow-hidden"
+          >
+            <div class="absolute -bottom-6 -right-6 opacity-10 text-7xl">
+              <i class="fas fa-coins"></i>
+            </div>
+            <div class="relative z-10">
+              <h4 class="text-2xl font-bold mb-4">Total Supply</h4>
+              <p class="text-3xl font-bold mb-2">690,000,000</p>
+              <p class="text-lg">$FISH tokens</p>
+            </div>
+          </div>
+
+          <div
+            class="fish-card bg-gradient-to-br from-yellow-200 to-yellow-300 p-8 rounded-xl shadow-lg relative overflow-hidden"
+          >
+            <div class="absolute -bottom-6 -right-6 opacity-10 text-7xl">
+              <i class="fas fa-percentage"></i>
+            </div>
+            <div class="relative z-10">
+              <h4 class="text-2xl font-bold mb-4">2% Tax</h4>
+              <div class="flex items-center mb-2">
+                <div class="w-4 h-4 rounded-full bg-yellow-600 mr-2"></div>
+                <p class="text-lg">1% Marketing & Dev</p>
+              </div>
+              <div class="flex items-center">
+                <div class="w-4 h-4 rounded-full bg-yellow-800 mr-2"></div>
+                <p class="text-lg">1% Rewards to Holders</p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="fish-card bg-gradient-to-br from-yellow-200 to-yellow-300 p-8 rounded-xl shadow-lg relative overflow-hidden"
+          >
+            <div class="absolute -bottom-6 -right-6 opacity-10 text-7xl">
+              <i class="fas fa-lock"></i>
+            </div>
+            <div class="relative z-10">
+              <h4 class="text-2xl font-bold mb-4">LP Locked</h4>
+              <p class="text-3xl font-bold mb-2">Until 2280</p>
+              <p class="text-lg">Liquidity locked for 255 years 🔒</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12 text-center">
+          <a
+            href="https://basescan.org"
+            target="_blank"
+            class="btn-swim inline-flex items-center bg-yellow-600 text-yellow-50 px-6 py-2 rounded-lg hover:bg-yellow-700 transition"
+          >
+            <i class="fas fa-external-link-alt mr-2"></i> View on BaseScan
+          </a>
+        </div>
+
+        <div class="mt-16">
+          <h4 class="text-2xl font-bold text-center mb-8">
+            Token Distribution
+          </h4>
+          <div class="bg-yellow-100 p-6 rounded-xl shadow-md">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <div class="mb-4">
+                  <div class="flex justify-between mb-1">
+                    <span>Public Sale</span>
+                    <span>60%</span>
+                  </div>
+                  <div class="w-full bg-yellow-200 rounded-full h-4">
+                    <div
+                      class="bg-yellow-600 h-4 rounded-full"
+                      style="width: 60%"
+                    ></div>
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <div class="flex justify-between mb-1">
+                    <span>Liquidity Pool</span>
+                    <span>20%</span>
+                  </div>
+                  <div class="w-full bg-yellow-200 rounded-full h-4">
+                    <div
+                      class="bg-yellow-600 h-4 rounded-full"
+                      style="width: 20%"
+                    ></div>
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <div class="flex justify-between mb-1">
+                    <span>Community Rewards</span>
+                    <span>10%</span>
+                  </div>
+                  <div class="w-full bg-yellow-200 rounded-full h-4">
+                    <div
+                      class="bg-yellow-600 h-4 rounded-full"
+                      style="width: 10%"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="mb-4">
+                  <div class="flex justify-between mb-1">
+                    <span>Marketing</span>
+                    <span>5%</span>
+                  </div>
+                  <div class="w-full bg-yellow-200 rounded-full h-4">
+                    <div
+                      class="bg-yellow-600 h-4 rounded-full"
+                      style="width: 5%"
+                    ></div>
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <div class="flex justify-between mb-1">
+                    <span>Development</span>
+                    <span>3%</span>
+                  </div>
+                  <div class="w-full bg-yellow-200 rounded-full h-4">
+                    <div
+                      class="bg-yellow-600 h-4 rounded-full"
+                      style="width: 3%"
+                    ></div>
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <div class="flex justify-between mb-1">
+                    <span>Team</span>
+                    <span>2%</span>
+                  </div>
+                  <div class="w-full bg-yellow-200 rounded-full h-4">
+                    <div
+                      class="bg-yellow-600 h-4 rounded-full"
+                      style="width: 2%"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How to Buy Section -->
+    <section id="how-to-buy" class="py-20 bg-yellow-200 px-6">
+      <div class="max-w-4xl mx-auto">
+        <h3 class="text-4xl font-bold mb-6 text-center">How to Buy $FISH</h3>
+        <p class="text-center max-w-2xl mx-auto mb-12">
+          Join the Fish Fam in just a few simple steps
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div class="order-2 md:order-1">
+            <div class="space-y-8">
+              <div class="flex">
+                <div class="flex-shrink-0 mr-4">
+                  <div
+                    class="w-10 h-10 bg-yellow-600 text-yellow-100 rounded-full flex items-center justify-center font-bold text-lg"
+                  >
+                    1
+                  </div>
+                </div>
+                <div>
+                  <h4 class="text-xl font-bold mb-2">Bridge ETH to Base</h4>
+                  <p>
+                    Transfer your ETH to the Base network via
+                    <a
+                      href="https://bridge.base.org"
+                      class="text-yellow-800 hover:text-yellow-600 underline font-medium"
+                      target="_blank"
+                      >bridge.base.org</a
+                    >
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex">
+                <div class="flex-shrink-0 mr-4">
+                  <div
+                    class="w-10 h-10 bg-yellow-600 text-yellow-100 rounded-full flex items-center justify-center font-bold text-lg"
+                  >
+                    2
+                  </div>
+                </div>
+                <div>
+                  <h4 class="text-xl font-bold mb-2">Connect Your Wallet</h4>
+                  <p>
+                    Open
+                    <a
+                      href="https://app.uniswap.org/swap?outputCurrency=0x5812fb91b48467dbbe3394d6d3ef7be9707dcddf&chain=base"
+                      class="text-yellow-800 hover:text-yellow-600 underline font-medium"
+                      target="_blank"
+                      >Uniswap</a
+                    >
+                    or any Base DEX and connect your wallet
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex">
+                <div class="flex-shrink-0 mr-4">
+                  <div
+                    class="w-10 h-10 bg-yellow-600 text-yellow-100 rounded-full flex items-center justify-center font-bold text-lg"
+                  >
+                    3
+                  </div>
+                </div>
+                <div>
+                  <h4 class="text-xl font-bold mb-2">Swap ETH for $FISH</h4>
+                  <p>
+                    Paste the $FISH contract address and swap your ETH for $FISH
+                    tokens
+                  </p>
+                  <div class="mt-2 flex items-center">
+                    <code
+                      class="bg-yellow-100 px-3 py-1 rounded text-sm font-mono mr-2"
+                      >0x5812fb91B48...</code
+                    >
+                    <button
+                      class="text-yellow-700 hover:text-yellow-900"
+                      onclick="copyToClipboard('0x5812fb91B48467DBBE3394D6D3ef7be9707DCDdf')"
+                    >
+                      <i class="far fa-copy"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex">
+                <div class="flex-shrink-0 mr-4">
+                  <div
+                    class="w-10 h-10 bg-yellow-600 text-yellow-100 rounded-full flex items-center justify-center font-bold text-lg"
+                  >
+                    4
+                  </div>
+                </div>
+                <div>
+                  <h4 class="text-xl font-bold mb-2">Join the Fish Fam</h4>
+                  <p>
+                    Join our Telegram and Discord communities to stay updated
+                    and enjoy the ride 🐟
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-1 md:order-2">
+            <div class="bg-yellow-300 p-6 rounded-xl shadow-lg">
+              <div class="text-center mb-4">
+                <i
+                  class="fas fa-hand-holding-usd text-5xl text-yellow-600 mb-4"
+                ></i>
+                <h4 class="text-2xl font-bold">Current Price</h4>
+                <p class="text-3xl font-bold">0.00009950</p>
+              </div>
+              <div class="space-y-4">
+                <div class="bg-yellow-100 p-4 rounded-lg">
+                  <div class="flex justify-between mb-1">
+                    <span class="font-medium">Buy on Uniswap</span>
+                    <i class="fas fa-external-link-alt"></i>
+                  </div>
+                  <a
+                    href="https://app.uniswap.org/swap?outputCurrency=0x5812fb91b48467dbbe3394d6d3ef7be9707dcddf&chain=base"
+                    target="_blank"
+                    class="block btn-swim text-center bg-yellow-600 text-yellow-50 py-2 rounded-lg hover:bg-yellow-700 transition"
+                    >Trade Now</a
+                  >
+                </div>
+                <div class="bg-yellow-100 p-4 rounded-lg">
+                  <div class="flex justify-between mb-1">
+                    <span class="font-medium">Buy on Flooz</span>
+                    <i class="fas fa-external-link-alt"></i>
+                  </div>
+                  <a
+                    href="https://flooz.xyz/trade/agoldfishonbase"
+                    target="_blank"
+                    class="block btn-swim text-center bg-yellow-600 text-yellow-50 py-2 rounded-lg hover:bg-yellow-700 transition"
+                    >Trade Now</a
+                  >
+                </div>
+
+                <div class="bg-yellow-100 p-4 rounded-lg">
+                  <div class="flex justify-between mb-1">
+                    <span class="font-medium"
+                      >Check Live price on dexscreener</span
+                    >
+                    <i class="fas fa-external-link-alt"></i>
+                  </div>
+                  <a
+                    href="https://dexscreener.com/base/0xeb0a0a27ce4fd2a78cea0ad76ecb042040d7389f"
+                    target="_blank"
+                    class="block btn-swim text-center bg-yellow-600 text-yellow-50 py-2 rounded-lg hover:bg-yellow-700 transition"
+                    >Check Now</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Fish Fam Section -->
+    <section id="fishfam" class="py-20 bg-yellow-50 px-6">
+      <div class="max-w-5xl mx-auto">
+        <h3 class="text-4xl font-bold mb-6 text-center">Meet the Fish Fam</h3>
+        <p class="text-center max-w-2xl mx-auto mb-12">
+          The dedicated team making waves in the crypto ocean
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          <div
+            class="fish-card bg-gradient-to-br from-yellow-200 to-yellow-300 rounded-xl shadow-lg overflow-hidden"
+          >
+            <div class="p-6 text-center">
+              <div
+                class="w-24 h-24 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4"
+              >
+                <i class="fas fa-user text-4xl text-yellow-600"></i>
+              </div>
+              <h4 class="text-2xl font-bold mb-2">Benny</h4>
+              <p class="text-yellow-800 mb-3">Community Lead & Meme Master</p>
+              <p class="mb-4">
+                Community cheerleader & endless source of fresh memes
+              </p>
+              <div class="flex justify-center space-x-3">
+                <a
+                  href="#"
+                  class="text-yellow-700 hover:text-yellow-900 transition-colors"
+                >
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a
+                  href="#"
+                  class="text-yellow-700 hover:text-yellow-900 transition-colors"
+                >
+                  <i class="fab fa-telegram"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="fish-card bg-gradient-to-br from-yellow-200 to-yellow-300 rounded-xl shadow-lg overflow-hidden"
+          >
+            <div class="p-6 text-center">
+              <div
+                class="w-24 h-24 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4"
+              >
+                <i class="fas fa-user text-4xl text-yellow-600"></i>
+              </div>
+              <h4 class="text-2xl font-bold mb-2">Cezibear</h4>
+              <p class="text-yellow-800 mb-3">Marketing Guru</p>
+              <p class="mb-4">
+                Master of memes and liquidity lore, spreading $FISH everywhere
+              </p>
+              <div class="flex justify-center space-x-3">
+                <a
+                  href="#"
+                  class="text-yellow-700 hover:text-yellow-900 transition-colors"
+                >
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a
+                  href="#"
+                  class="text-yellow-700 hover:text-yellow-900 transition-colors"
+                >
+                  <i class="fab fa-telegram"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="fish-card bg-gradient-to-br from-yellow-200 to-yellow-300 rounded-xl shadow-lg overflow-hidden"
+          >
+            <div class="p-6 text-center">
+              <div
+                class="w-24 h-24 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4"
+              >
+                <i class="fas fa-user text-4xl text-yellow-600"></i>
+              </div>
+              <h4 class="text-2xl font-bold mb-2">The Klaus</h4>
+              <p class="text-yellow-800 mb-3">Strategic Advisor</p>
+              <p class="mb-4">
+                Protects the flow of rewards with wisdom and strategic
+                brilliance
+              </p>
+              <div class="flex justify-center space-x-3">
+                <a
+                  href="#"
+                  class="text-yellow-700 hover:text-yellow-900 transition-colors"
+                >
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a
+                  href="#"
+                  class="text-yellow-700 hover:text-yellow-900 transition-colors"
+                >
+                  <i class="fab fa-telegram"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="fish-card bg-gradient-to-br from-yellow-200 to-yellow-300 rounded-xl shadow-lg overflow-hidden"
+          >
+            <div class="p-6 text-center">
+              <div
+                class="w-24 h-24 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4"
+              >
+                <i class="fas fa-user text-4xl text-yellow-600"></i>
+              </div>
+              <h4 class="text-2xl font-bold mb-2">Graphics Legend</h4>
+              <p class="text-yellow-800 mb-3">Amazing Graphics Designer</p>
+              <p class="mb-4">
+                Creates stunning graphics that please the eyes and the soul
+              </p>
+              <div class="flex justify-center space-x-3">
+                <a
+                  href="#"
+                  class="text-yellow-700 hover:text-yellow-900 transition-colors"
+                >
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a
+                  href="#"
+                  class="text-yellow-700 hover:text-yellow-900 transition-colors"
+                >
+                  <i class="fab fa-telegram"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="fish-card bg-gradient-to-br from-yellow-200 to-yellow-300 rounded-xl shadow-lg overflow-hidden"
+          >
+            <div class="p-6 text-center">
+              <div
+                class="w-24 h-24 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4"
+              >
+                <i class="fas fa-user text-4xl text-yellow-600"></i>
+              </div>
+              <h4 class="text-2xl font-bold mb-2">Bugs Banner</h4>
+              <p class="text-yellow-800 mb-3">The Banner of Bugs?</p>
+              <p class="mb-4">Bugs the banners... (LOL) hehe</p>
+              <div class="flex justify-center space-x-3">
+                <a
+                  href="#"
+                  class="text-yellow-700 hover:text-yellow-900 transition-colors"
+                >
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a
+                  href="#"
+                  class="text-yellow-700 hover:text-yellow-900 transition-colors"
+                >
+                  <i class="fab fa-telegram"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="fish-card bg-gradient-to-br from-yellow-200 to-yellow-300 rounded-xl shadow-lg overflow-hidden"
+          >
+            <div class="p-6 text-center">
+              <div
+                class="w-24 h-24 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4"
+              >
+                <i class="fas fa-user text-4xl text-yellow-600"></i>
+              </div>
+              <h4 class="text-2xl font-bold mb-2">Queen of Raids</h4>
+              <p class="text-yellow-800 mb-3">The Raider</p>
+              <p class="mb-4">Amazing raiding skills</p>
+              <div class="flex justify-center space-x-3">
+                <a
+                  href="#"
+                  class="text-yellow-700 hover:text-yellow-900 transition-colors"
+                >
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a
+                  href="#"
+                  class="text-yellow-700 hover:text-yellow-900 transition-colors"
+                >
+                  <i class="fab fa-telegram"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-16 bg-yellow-100 rounded-xl p-8 shadow-md">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h4 class="text-2xl font-bold mb-4">Join Our Community</h4>
+              <p class="mb-6">
+                Become part of our growing community of fish enthusiasts! Stay
+                updated with the latest news, memes, and exclusive airdrops.
+              </p>
+              <div class="space-y-4">
+                <a
+                  href="#"
+                  class="btn-swim flex items-center justify-center bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition w-full sm:w-auto"
+                >
+                  <i class="fab fa-telegram mr-2"></i> Join Telegram
+                </a>
+                <a
+                  href="#"
+                  class="btn-swim flex items-center justify-center bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition w-full sm:w-auto"
+                >
+                  <i class="fab fa-discord mr-2"></i> Join Discord
+                </a>
+              </div>
+            </div>
+            <div class="text-center">
+              <i class="fas fa-users text-6xl text-yellow-600 mb-4"></i>
+              <div class="text-3xl font-bold mb-2">12,500+</div>
+              <p class="text-lg">Community Members</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust Section -->
+    <section id="trust" class="py-20 bg-yellow-200 px-6">
+      <div class="max-w-5xl mx-auto">
+        <h3 class="text-4xl font-bold mb-6 text-center">Why Trust $FISH?</h3>
+        <p class="text-center max-w-2xl mx-auto mb-12">
+          Your safety and security are our top priorities in the crypto ocean
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div class="bg-yellow-100 rounded-xl p-8 shadow-lg">
+            <h4 class="text-2xl font-bold mb-6 flex items-center">
+              <i class="fas fa-shield-alt text-yellow-600 mr-3"></i> Security
+              Measures
+            </h4>
+            <ul class="space-y-4">
+              <li class="flex items-start">
+                <div class="flex-shrink-0 mt-1">
+                  <i class="fas fa-check-circle text-green-500"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="font-semibold">Liquidity locked till 2280</p>
+                  <p class="text-sm text-yellow-800">
+                    Ensuring long-term price stability and preventing rug pulls
+                  </p>
+                </div>
+              </li>
+              <li class="flex items-start">
+                <div class="flex-shrink-0 mt-1">
+                  <i class="fas fa-check-circle text-green-500"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="font-semibold">Contract Renounced</p>
+                  <p class="text-sm text-yellow-800">
+                    Ownership transferred to the zero address, making the
+                    contract immutable
+                  </p>
+                </div>
+              </li>
+              <li class="flex items-start">
+                <div class="flex-shrink-0 mt-1">
+                  <i class="fas fa-check-circle text-green-500"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="font-semibold">Verified on BaseScan</p>
+                  <p class="text-sm text-yellow-800">
+                    All code is open source and verified for transparency
+                  </p>
+                </div>
+              </li>
+              <li class="flex items-start">
+                <div class="flex-shrink-0 mt-1">
+                  <i class="fas fa-check-circle text-green-500"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="font-semibold">Fully transparent tokenomics</p>
+                  <p class="text-sm text-yellow-800">
+                    Clear and straightforward token distribution and tax policy
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="bg-yellow-100 rounded-xl p-8 shadow-lg">
+            <h4 class="text-2xl font-bold mb-6 flex items-center">
+              <i class="fas fa-certificate text-yellow-600 mr-3"></i>
+              Certifications & Audits
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div
+                class="bg-white rounded-lg p-4 shadow flex flex-col items-center text-center"
+              >
+                <img
+                  src="/api/placeholder/100/100"
+                  alt="CertiK"
+                  class="mb-3 rounded"
+                />
+                <h5 class="font-bold">CertiK Audit</h5>
+                <p class="text-sm text-yellow-800 mb-2">
+                  Security Verification
+                </p>
+                <a href="#" class="text-xs text-yellow-600 underline"
+                  >View Report</a
+                >
+              </div>
+              <div
+                class="bg-white rounded-lg p-4 shadow flex flex-col items-center text-center"
+              >
+                <img
+                  src="/api/placeholder/100/100"
+                  alt="SolidProof"
+                  class="mb-3 rounded"
+                />
+                <h5 class="font-bold">SolidProof</h5>
+                <p class="text-sm text-yellow-800 mb-2">KYC Verification</p>
+                <a href="#" class="text-xs text-yellow-600 underline"
+                  >View Details</a
+                >
+              </div>
+              <div
+                class="bg-white rounded-lg p-4 shadow flex flex-col items-center text-center"
+              >
+                <img
+                  src="/api/placeholder/100/100"
+                  alt="Chain Analysis"
+                  class="mb-3 rounded"
+                />
+                <h5 class="font-bold">Chain Analysis</h5>
+                <p class="text-sm text-yellow-800 mb-2">
+                  Contract Verification
+                </p>
+                <a href="#" class="text-xs text-yellow-600 underline"
+                  >View Report</a
+                >
+              </div>
+              <div
+                class="bg-white rounded-lg p-4 shadow flex flex-col items-center text-center"
+              >
+                <img
+                  src="/api/placeholder/100/100"
+                  alt="BaseScan"
+                  class="mb-3 rounded"
+                />
+                <h5 class="font-bold">BaseScan</h5>
+                <p class="text-sm text-yellow-800 mb-2">Verified Contract</p>
+                <a
+                  href="https://basescan.org/address/0x..."
+                  class="text-xs text-yellow-600 underline"
+                  >View Contract</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap" class="py-20 bg-yellow-50 px-6">
+      <div class="max-w-5xl mx-auto">
+        <h3 class="text-4xl font-bold mb-6 text-center">$FISH Roadmap</h3>
+        <p class="text-center max-w-2xl mx-auto mb-12">
+          Our journey through the crypto ocean
+        </p>
+
+        <div class="relative">
+          <!-- Timeline Line -->
+          <div
+            class="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-yellow-400"
+          ></div>
+
+          <!-- Timeline Items -->
+          <div class="space-y-12 relative">
+            <!-- Phase 1 -->
+            <div class="md:flex items-center">
+              <div class="md:w-1/2 mb-8 md:mb-0 md:pr-12 md:text-right">
+                <div class="fish-card bg-yellow-200 p-6 rounded-xl shadow-md">
+                  <h4
+                    class="text-xl font-bold mb-3 flex md:justify-end items-center"
+                  >
+                    <span>Phase 1: Launch</span>
+                    <span
+                      class="md:hidden ml-2 bg-yellow-600 text-yellow-100 px-2 py-1 rounded text-xs"
+                      >COMPLETED</span
+                    >
+                  </h4>
+                  <ul class="space-y-2 text-yellow-800">
+                    <li class="flex md:justify-end items-center">
+                      <span>Website & Social Media Launch</span>
+                      <i class="fas fa-check-circle text-green-500 ml-2"></i>
+                    </li>
+                    <li class="flex md:justify-end items-center">
+                      <span>Initial Token Distribution</span>
+                      <i class="fas fa-check-circle text-green-500 ml-2"></i>
+                    </li>
+                    <li class="flex md:justify-end items-center">
+                      <span>Community Building</span>
+                      <i class="fas fa-check-circle text-green-500 ml-2"></i>
+                    </li>
+                    <li class="flex md:justify-end items-center">
+                      <span>1,000+ Holders</span>
+                      <i class="fas fa-check-circle text-green-500 ml-2"></i>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div
+                class="hidden md:block absolute left-1/2 transform -translate-x-1/2"
+              >
+                <div
+                  class="w-12 h-12 rounded-full bg-yellow-600 border-4 border-yellow-100 flex items-center justify-center text-yellow-100"
+                >
+                  <span class="font-bold">1</span>
+                </div>
+                <div
+                  class="mt-2 bg-yellow-600 text-yellow-100 px-2 py-1 rounded text-xs text-center"
+                >
+                  COMPLETED
+                </div>
+              </div>
+              <div class="md:w-1/2 md:pl-12"></div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="md:flex items-center">
+              <div class="md:w-1/2 mb-8 md:mb-0 md:pr-12"></div>
+              <div
+                class="hidden md:block absolute left-1/2 transform -translate-x-1/2"
+              >
+                <div
+                  class="w-12 h-12 rounded-full bg-yellow-600 border-4 border-yellow-100 flex items-center justify-center text-yellow-100"
+                >
+                  <span class="font-bold">2</span>
+                </div>
+                <div
+                  class="mt-2 bg-yellow-500 text-yellow-100 px-2 py-1 rounded text-xs text-center"
+                >
+                  IN PROGRESS
+                </div>
+              </div>
+              <div class="md:w-1/2 md:pl-12">
+                <div class="fish-card bg-yellow-200 p-6 rounded-xl shadow-md">
+                  <h4 class="text-xl font-bold mb-3 flex items-center">
+                    <span>Phase 2: Growth</span>
+                    <span
+                      class="md:hidden ml-2 bg-yellow-500 text-yellow-100 px-2 py-1 rounded text-xs"
+                      >IN PROGRESS</span
+                    >
+                  </h4>
+                  <ul class="space-y-2 text-yellow-800">
+                    <li class="flex items-center">
+                      <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                      <span>CEX Listings (Tier 2 Exchanges)</span>
+                    </li>
+                    <li class="flex items-center">
+                      <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                      <span>10,000+ Holders</span>
+                    </li>
+                    <li class="flex items-center">
+                      <i class="fas fa-spinner text-yellow-600 mr-2"></i>
+                      <span>$FISH Staking Platform</span>
+                    </li>
+                    <li class="flex items-center">
+                      <i class="fas fa-spinner text-yellow-600 mr-2"></i>
+                      <span>NFT Collection Launch</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="md:flex items-center">
+              <div class="md:w-1/2 mb-8 md:mb-0 md:pr-12 md:text-right">
+                <div class="fish-card bg-yellow-200 p-6 rounded-xl shadow-md">
+                  <h4
+                    class="text-xl font-bold mb-3 flex md:justify-end items-center"
+                  >
+                    <span>Phase 3: Expansion</span>
+                    <span
+                      class="md:hidden ml-2 bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-xs"
+                      >UPCOMING</span
+                    >
+                  </h4>
+                  <ul class="space-y-2 text-yellow-800">
+                    <li class="flex md:justify-end items-center">
+                      <span>Major CEX Listings</span>
+                      <i class="far fa-circle text-yellow-600 ml-2"></i>
+                    </li>
+                    <li class="flex md:justify-end items-center">
+                      <span>$FISH Swap Platform</span>
+                      <i class="far fa-circle text-yellow-600 ml-2"></i>
+                    </li>
+                    <li class="flex md:justify-end items-center">
+                      <span>Cross-Chain Integration</span>
+                      <i class="far fa-circle text-yellow-600 ml-2"></i>
+                    </li>
+                    <li class="flex md:justify-end items-center">
+                      <span>50,000+ Holders</span>
+                      <i class="far fa-circle text-yellow-600 ml-2"></i>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div
+                class="hidden md:block absolute left-1/2 transform -translate-x-1/2"
+              >
+                <div
+                  class="w-12 h-12 rounded-full bg-yellow-400 border-4 border-yellow-100 flex items-center justify-center text-yellow-900"
+                >
+                  <span class="font-bold">3</span>
+                </div>
+                <div
+                  class="mt-2 bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-xs text-center"
+                >
+                  UPCOMING
+                </div>
+              </div>
+              <div class="md:w-1/2 md:pl-12"></div>
+            </div>
+
+            <!-- Phase 4 -->
+            <div class="md:flex items-center">
+              <div class="md:w-1/2 mb-8 md:mb-0 md:pr-12"></div>
+              <div
+                class="hidden md:block absolute left-1/2 transform -translate-x-1/2"
+              >
+                <div
+                  class="w-12 h-12 rounded-full bg-yellow-300 border-4 border-yellow-100 flex items-center justify-center text-yellow-900"
+                >
+                  <span class="font-bold">4</span>
+                </div>
+                <div
+                  class="mt-2 bg-yellow-300 text-yellow-900 px-2 py-1 rounded text-xs text-center"
+                >
+                  FUTURE
+                </div>
+              </div>
+              <div class="md:w-1/2 md:pl-12">
+                <div class="fish-card bg-yellow-200 p-6 rounded-xl shadow-md">
+                  <h4 class="text-xl font-bold mb-3 flex items-center">
+                    <span>Phase 4: Ecosystem</span>
+                    <span
+                      class="md:hidden ml-2 bg-yellow-300 text-yellow-900 px-2 py-1 rounded text-xs"
+                      >FUTURE</span
+                    >
+                  </h4>
+                  <ul class="space-y-2 text-yellow-800">
+                    <li class="flex items-center">
+                      <i class="far fa-circle text-yellow-600 mr-2"></i>
+                      <span>$FISH DAO Governance</span>
+                    </li>
+                    <li class="flex items-center">
+                      <i class="far fa-circle text-yellow-600 mr-2"></i>
+                      <span>$FISH Metaverse Integration</span>
+                    </li>
+                    <li class="flex items-center">
+                      <i class="far fa-circle text-yellow-600 mr-2"></i>
+                      <span>Real World Utility Partnerships</span>
+                    </li>
+                    <li class="flex items-center">
+                      <i class="far fa-circle text-yellow-600 mr-2"></i>
+                      <span>100,000+ Holders</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-16 bg-yellow-200 px-6">
+      <div class="max-w-4xl mx-auto">
+        <div
+          class="bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-2xl p-8 md:p-12 shadow-xl relative overflow-hidden"
+        >
+          <div class="absolute -right-12 -bottom-12 text-yellow-300 opacity-20">
+            <i class="fas fa-fish text-9xl"></i>
+          </div>
+          <div class="relative z-10">
+            <h3 class="text-3xl font-bold mb-4 text-yellow-900">
+              Stay in the Loop
+            </h3>
+            <p class="text-lg mb-8 text-yellow-800 max-w-xl">
+              Subscribe to our newsletter for exclusive updates, airdrops, and
+              $FISH giveaways!
+            </p>
+            <form class="flex flex-col sm:flex-row gap-4">
+              <input
+                type="email"
+                placeholder="Your email address"
+                class="px-4 py-3 rounded-lg flex-grow focus:outline-none focus:ring-2 focus:ring-yellow-900 transition-shadow"
+              />
+              <button
+                type="submit"
+                class="btn-swim bg-yellow-900 text-yellow-100 px-6 py-3 rounded-lg hover:bg-yellow-800 transition font-medium flex-shrink-0"
+              >
+                Subscribe
+              </button>
+            </form>
+            <p class="mt-4 text-xs text-yellow-800">
+              We respect your privacy. Unsubscribe at any time.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-yellow-800 text-yellow-100 pt-16 pb-8 px-6">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+          <div>
+            <div class="flex items-center space-x-2 mb-4">
+              <i class="fas fa-fish text-2xl swimming"></i>
+              <h2 class="text-2xl font-bold">Goldfish on Base</h2>
+            </div>
+            <p class="text-yellow-300 mb-6">
+              The meme token making waves in the crypto ocean.
+            </p>
+            <div class="flex space-x-4">
+              <a
+                href="#"
+                class="text-yellow-300 hover:text-yellow-100 transition-colors"
+              >
+                <i class="fab fa-twitter text-xl"></i>
+              </a>
+              <a
+                href="#"
+                class="text-yellow-300 hover:text-yellow-100 transition-colors"
+              >
+                <i class="fab fa-telegram text-xl"></i>
+              </a>
+              <a
+                href="#"
+                class="text-yellow-300 hover:text-yellow-100 transition-colors"
+              >
+                <i class="fab fa-discord text-xl"></i>
+              </a>
+              <a
+                href="#"
+                class="text-yellow-300 hover:text-yellow-100 transition-colors"
+              >
+                <i class="fab fa-medium text-xl"></i>
+              </a>
+            </div>
+          </div>
+          <div>
+            <h4 class="text-xl font-bold mb-4">Quick Links</h4>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="#tokenomics"
+                  class="text-yellow-300 hover:text-yellow-100 transition-colors"
+                  >Tokenomics</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#how-to-buy"
+                  class="text-yellow-300 hover:text-yellow-100 transition-colors"
+                  >How to Buy</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#fishfam"
+                  class="text-yellow-300 hover:text-yellow-100 transition-colors"
+                  >Fish Fam</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#trust"
+                  class="text-yellow-300 hover:text-yellow-100 transition-colors"
+                  >Why Trust</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#roadmap"
+                  class="text-yellow-300 hover:text-yellow-100 transition-colors"
+                  >Roadmap</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xl font-bold mb-4">Resources</h4>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="#"
+                  class="text-yellow-300 hover:text-yellow-100 transition-colors"
+                  >Whitepaper</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-yellow-300 hover:text-yellow-100 transition-colors"
+                  >Audit Reports</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-yellow-300 hover:text-yellow-100 transition-colors"
+                  >Media Kit</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-yellow-300 hover:text-yellow-100 transition-colors"
+                  >Brand Assets</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-yellow-300 hover:text-yellow-100 transition-colors"
+                  >FAQs</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xl font-bold mb-4">Contract</h4>
+            <div class="bg-yellow-900 p-4 rounded-lg mb-4">
+              <p class="text-sm font-mono break-all">0x5812fb91B48...</p>
+              <button
+                class="mt-2 text-yellow-300 hover:text-yellow-100 transition-colors text-sm"
+                onclick="copyToClipboard('0x5812fb91B48467DBBE3394D6D3ef7be9707DCDdf')"
+              >
+                <i class="far fa-copy mr-1"></i> Copy Address
+              </button>
+            </div>
+            <p class="text-yellow-300 text-sm">
+              Always verify the contract address before transactions!
+            </p>
+          </div>
+        </div>
+        <div
+          class="border-t border-yellow-700 pt-8 text-center text-yellow-300"
+        >
+          <p>&copy; 2025 Goldfish on Base. All rights reserved. Swim Safe 🐠</p>
+          <p class="mt-2 text-sm">
+            $FISH is a meme token with no intrinsic value or financial promise.
+            DYOR.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button
+      id="backToTop"
+      class="fixed bottom-8 right-8 bg-yellow-600 text-yellow-100 w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300"
+    >
+      <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script>
+      // Mobile Menu
+      const menuBtn = document.getElementById("menuBtn");
+      const closeMenuBtn = document.getElementById("closeMenuBtn");
+      const mobileMenu = document.getElementById("mobileMenu");
+
+      menuBtn.addEventListener("click", () => {
+        mobileMenu.classList.add("show");
+        document.body.style.overflow = "hidden";
+      });
+
+      closeMenuBtn.addEventListener("click", () => {
+        closeMenu();
+      });
+
+      function closeMenu() {
+        mobileMenu.classList.remove("show");
+        document.body.style.overflow = "";
+      }
+
+      // Progress Bar
+      window.onscroll = function () {
+        // Progress bar
+        const winScroll =
+          document.body.scrollTop || document.documentElement.scrollTop;
+        const height =
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById("progressBar").style.width = scrolled + "%";
+
+        // Back to top button
+        const backToTopBtn = document.getElementById("backToTop");
+        if (
+          document.body.scrollTop > 500 ||
+          document.documentElement.scrollTop > 500
+        ) {
+          backToTopBtn.classList.remove("opacity-0", "invisible");
+          backToTopBtn.classList.add("opacity-100", "visible");
+        } else {
+          backToTopBtn.classList.add("opacity-0", "invisible");
+          backToTopBtn.classList.remove("opacity-100", "visible");
+        }
+      };
+
+      // Back to top function
+      document
+        .getElementById("backToTop")
+        .addEventListener("click", function () {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+      // Copy to clipboard function
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(
+          function () {
+            alert("Address copied to clipboard!");
+          },
+          function (err) {
+            console.error("Could not copy text: ", err);
+          }
+        );
+      }
+
+      // Add ripple effect to buttons
+      const buttons = document.querySelectorAll(".btn-swim");
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", function (e) {
+          const x = e.clientX - e.target.offsetLeft;
+          const y = e.clientY - e.target.offsetTop;
+
+          const ripple = document.createElement("span");
+          ripple.classList.add("ripple");
+          ripple.style.left = `${x}px`;
+          ripple.style.top = `${y}px`;
+
+          this.appendChild(ripple);
+
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
+      });
+
+      // Add $FISH to wallet function
+      function addToWallet() {
+        // Check if MetaMask is installed
+        if (typeof window.ethereum !== "undefined") {
+          // ERC-20 token details
+          const tokenAddress = "0xFISH...69420";
+          const tokenSymbol = "FISH";
+          const tokenDecimals = 18;
+          const tokenImage = "https://example.com/fish.png";
+
+          try {
+            // Request to add token to wallet
+            ethereum.request({
+              method: "wallet_watchAsset",
+              params: {
+                type: "ERC20",
+                options: {
+                  address: tokenAddress,
+                  symbol: tokenSymbol,
+                  decimals: tokenDecimals,
+                  image: tokenImage,
+                },
+              },
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        } else {
+          alert(
+            "MetaMask is not installed! Please install it to add $FISH to your wallet."
+          );
+        }
+      }
+    </script>
+  </body>
+</html>
